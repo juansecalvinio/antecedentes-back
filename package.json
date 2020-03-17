@@ -1,0 +1,22 @@
+{
+  "name": "antecedentes-back",
+  "version": "1.0.0",
+  "description": "Backend antecedentes-laborales",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juansecalvinio/antecedentes-back.git"
+  },
+  "author": "juansecalvinio",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/juansecalvinio/antecedentes-back/issues"
+  },
+  "homepage": "https://github.com/juansecalvinio/antecedentes-back#readme",
+  "devDependencies": {
+    "express": "^4.17.1"
+  }
+}
