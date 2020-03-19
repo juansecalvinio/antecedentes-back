@@ -17,6 +17,10 @@
     "url": "https://github.com/juansecalvinio/antecedentes-back/issues"
   },
   "homepage": "https://github.com/juansecalvinio/antecedentes-back#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  },
   "devDependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1"
