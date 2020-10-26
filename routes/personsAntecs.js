@@ -6,7 +6,6 @@ const validationHandler = require('../utils/middleware/validationHandler');
 const scopeValidationHandler = require('./../utils/middleware/scopesValidationHandler');
 
 const { personIdSchema } = require('./../schemas/persons');
-const { antecIdSchema } = require('./../schemas/antecs');
 const { createPersonAntec } = require('./../schemas/personsAntecs');
 
 const personsAntecsServices = new PersonsAntecsServices();

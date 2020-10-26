@@ -16,6 +16,11 @@ class PersonsServices {
         return person || {};
     }
 
+    async getPersonByCuit({ cuit }) {
+        const person = await this.mongoDB.getByParam(this.collection, 'cuit', cuit);
+        return person || {};
+    }
+
     async registerPerson({ person }) {
         const registeredPersonId = await this.mongoDB.create(this.collection, person);
         return registeredPersonId;

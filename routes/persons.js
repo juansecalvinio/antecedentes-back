@@ -27,7 +27,7 @@ function personsApi(app) {
         passport.authenticate('jwt', { session: false }),
         scopeValidationHandler(['read:personas']),
         async function(req, res, next) {
-            cacheResponse(res, FIVE_MINUTES_TO_SECONDS);
+            cacheResponse(res, SIXTY_MINUTES_TO_SECONDS);
             const { tags } = req.query;
     
             try {
@@ -43,20 +43,17 @@ function personsApi(app) {
         }
     )
 
-    // Get by id
-    router.get("/:id", 
+    // Get by cuit
+    router.get("/cuit/:cuit",
         passport.authenticate('jwt', { session: false }),
         scopeValidationHandler(['read:personas']),
-        validationHandler({ id: personIdSchema }, 'params'), 
         async function(req, res, next) {
             cacheResponse(res, SIXTY_MINUTES_TO_SECONDS);
-            const { id } = req.params;
-
+            const { cuit } = req.params;
             try {
-                const persons = await personsServices.getPerson({ id });
-
+                const person = await personsServices.getPersonByCuit({ cuit });
                 res.status(200).json({
-                    data: persons,
+                    data: person,
                     message: 'Persona encontrada'
                 })
             } catch (err) {
@@ -65,14 +62,17 @@ function personsApi(app) {
         }
     )
 
-    // Get by cuit
-    router.get("/:cuit",
+    // Get by id
+    router.get("/id/:id", 
         passport.authenticate('jwt', { session: false }),
         scopeValidationHandler(['read:personas']),
+        validationHandler({ id: personIdSchema }, 'params'),
         async function(req, res, next) {
-            const { cuit } = req.params;
+            cacheResponse(res, SIXTY_MINUTES_TO_SECONDS);
+            const { id } = req.params;
+
             try {
-                const persons = await personsServices.getPerson({ cuit });
+                const persons = await personsServices.getPerson({ id });
 
                 res.status(200).json({
                     data: persons,

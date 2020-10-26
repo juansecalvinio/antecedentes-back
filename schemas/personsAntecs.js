@@ -1,4 +1,3 @@
-const joi = require('@hapi/joi');
 const ID_SCHEMA = require('./../utils/constants');
 
 const { personIdSchema } = require('./persons');
