@@ -7,7 +7,7 @@ const antecsServices = new AntecsServices();
 const scopeValidationHandler = require('./../utils/middleware/scopesValidationHandler');
 
 // JWT strategy
-require('../utils/auth/strategies/jwt');
+// require('../utils/auth/strategies/jwt');
 
 function antecsApi(app) {
     const router = express.Router();
@@ -15,8 +15,8 @@ function antecsApi(app) {
 
     // Get all
     router.get("/", 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['read:antecedentes']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['read:antecedentes']),
         async function(req, res, next) {
             const { tags } = req.query;
 
@@ -35,8 +35,8 @@ function antecsApi(app) {
 
     // Get by id
     router.get("/:id", 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['read:antecedentes']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['read:antecedentes']),
         async function(req, res, next) {
             const { id } = req.params;
             try {
@@ -54,8 +54,8 @@ function antecsApi(app) {
 
     // Create antec
     router.post("/", 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['create:antecedentes']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['create:antecedentes']),
         async function(req, res, next) {
         const { body: antec } = req;
         try {
@@ -72,8 +72,8 @@ function antecsApi(app) {
 
     // Edit person
     router.put("/:id", 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['update:antecedentes']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['update:antecedentes']),
         async function(req, res, next) {
         const { id } = req.params;
         const { body: antec } = req;
@@ -91,8 +91,8 @@ function antecsApi(app) {
 
     // Delete antec
     router.delete("/:id", 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['delete:antecedentes']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['delete:antecedentes']),
         async function(req, res, next) {
             const { id } = req.params;
             try {

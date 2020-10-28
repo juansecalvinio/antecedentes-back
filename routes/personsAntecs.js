@@ -11,15 +11,15 @@ const { createPersonAntec } = require('./../schemas/personsAntecs');
 const personsAntecsServices = new PersonsAntecsServices();
 
 // JWT strategy
-require('../utils/auth/strategies/jwt');
+// require('../utils/auth/strategies/jwt');
 
 function personsAntecsApi(app) {
     const router = express.Router();
     app.use('/api/persons-antecs', router);
 
     router.get('/', 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['read:personas-antecedentes']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['read:personas-antecedentes']),
         validationHandler({ personId: personIdSchema }, 'query'), 
         async function(req, res, next) {
             const { personId } = req.query;
@@ -38,8 +38,8 @@ function personsAntecsApi(app) {
     );
 
     router.post('/',
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['create:personas-antecedentes']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['create:personas-antecedentes']),
         validationHandler(createPersonAntec), 
         async function(req, res, next) {
             const { body: personAntec } = req;
@@ -60,8 +60,8 @@ function personsAntecsApi(app) {
     );
 
     router.delete('/:personAntecId', 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['delete:personas-antecedentes']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['delete:personas-antecedentes']),
         validationHandler({ personAntecId: personIdSchema }, 'params'), 
         async function(req, res, next) {
             const { personAntecId } = req.params;

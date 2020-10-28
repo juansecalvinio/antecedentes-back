@@ -16,7 +16,7 @@ const {
 const personsServices = new PersonsServices();
 
 // JWT strategy
-require('../utils/auth/strategies/jwt');
+// require('../utils/auth/strategies/jwt');
 
 function personsApi(app) {
     const router = express.Router();
@@ -24,8 +24,8 @@ function personsApi(app) {
 
     // Get all
     router.get("/", 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['read:personas']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['read:personas']),
         async function(req, res, next) {
             cacheResponse(res, SIXTY_MINUTES_TO_SECONDS);
             const { tags } = req.query;
@@ -45,8 +45,8 @@ function personsApi(app) {
 
     // Get by cuit
     router.get("/cuit/:cuit",
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['read:personas']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['read:personas']),
         async function(req, res, next) {
             cacheResponse(res, SIXTY_MINUTES_TO_SECONDS);
             const { cuit } = req.params;
@@ -64,8 +64,8 @@ function personsApi(app) {
 
     // Get by id
     router.get("/id/:id", 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['read:personas']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['read:personas']),
         validationHandler({ id: personIdSchema }, 'params'),
         async function(req, res, next) {
             cacheResponse(res, SIXTY_MINUTES_TO_SECONDS);
@@ -86,8 +86,8 @@ function personsApi(app) {
 
     // Create person
     router.post("/",
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['create:personas']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['create:personas']),
         validationHandler(createPersonSchema),
         async function(req, res, next) {
             const { body: person } = req; 
@@ -106,8 +106,8 @@ function personsApi(app) {
 
     // Edit person
     router.put("/:id", 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['update:personas']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['update:personas']),
         validationHandler({ id: personIdSchema }, 'params'), 
         validationHandler(udpatePersonSchema), 
         async function(req, res, next) {
@@ -128,8 +128,8 @@ function personsApi(app) {
 
     // Delete person
     router.delete("/:id", 
-        passport.authenticate('jwt', { session: false }),
-        scopeValidationHandler(['delete:personas']),
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['delete:personas']),
         validationHandler({ id: personIdSchema }), 
         async function(req, res, next) {
             const { id } = req.params;
