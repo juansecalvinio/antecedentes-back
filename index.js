@@ -29,7 +29,7 @@ app.use(notFoundHandler);
 const cors = require('cors');
 
 // Indico la url del frontend para permitirle el cruce de datos
-const corsOptions = { origin: "http://localhost:3000" };
+// const corsOptions = { origin: "http://localhost:3000" };
 const corsOptions = { origin: "*" };
 app.use(cors(corsOptions));
 
