@@ -26,11 +26,12 @@ personsAntecsApi(app);
 // catch 404
 app.use(notFoundHandler);
 
-// const cors = require('cors');
+const cors = require('cors');
 
-// // Indico la url del frontend para permitirle el cruce de datos
-// const corsOptions = { origin: "http://localhost:3000" };
-// app.use(cors(corsOptions));
+// Indico la url del frontend para permitirle el cruce de datos
+const corsOptions = { origin: "http://localhost:3000" };
+const corsOptions = { origin: "*" };
+app.use(cors(corsOptions));
 
 // error middlewares
 app.use(logErrors);
