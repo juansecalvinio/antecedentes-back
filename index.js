@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
 const { config } = require('./config/index.js');
@@ -16,6 +17,7 @@ const notFoundHandler = require('./utils/middleware/notFoundHandler');
 
 // body parser
 app.use(express.json());
+app.use(cors());
 
 // routes
 authApi(app);
@@ -25,13 +27,6 @@ personsAntecsApi(app);
 
 // catch 404
 app.use(notFoundHandler);
-
-const cors = require('cors');
-
-// Indico la url del frontend para permitirle el cruce de datos
-// const corsOptions = { origin: "http://localhost:3000" };
-const corsOptions = { origin: "*" };
-app.use(cors(corsOptions));
 
 // error middlewares
 app.use(logErrors);
