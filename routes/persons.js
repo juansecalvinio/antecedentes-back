@@ -90,8 +90,8 @@ function personsApi(app) {
         // scopeValidationHandler(['create:personas']),
         // validationHandler(createPersonSchema),
         async function(req, res, next) {
+            console.log(req);
             const { body: person } = req; 
-            console.log(req.body);
             try {
                 const createdPersonId = await personsServices.registerPerson({ person });
 
