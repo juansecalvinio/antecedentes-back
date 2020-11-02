@@ -88,9 +88,10 @@ function personsApi(app) {
     router.post("/",
         // passport.authenticate('jwt', { session: false }),
         // scopeValidationHandler(['create:personas']),
-        validationHandler(createPersonSchema),
+        // validationHandler(createPersonSchema),
         async function(req, res, next) {
             const { body: person } = req; 
+            console.log(req.body);
             try {
                 const createdPersonId = await personsServices.registerPerson({ person });
 
