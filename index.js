@@ -7,7 +7,6 @@ const { config } = require('./config/index.js');
 const authApi = require('./routes/auth');
 const antecsApi = require('./routes/antecs');
 const personsApi = require('./routes/persons');
-const personsAntecsApi = require('./routes/personsAntecs');
 
 
 const { logErrors, wrapErrors, errorHandler } = require('./utils/middleware/errorHandlers');
@@ -23,7 +22,6 @@ app.use(cors());
 authApi(app);
 antecsApi(app);
 personsApi(app);
-personsAntecsApi(app);
 
 // catch 404
 app.use(notFoundHandler);

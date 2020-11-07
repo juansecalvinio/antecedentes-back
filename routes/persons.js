@@ -91,7 +91,7 @@ function personsApi(app) {
         // validationHandler(createPersonSchema),
         async function(req, res, next) {
             console.log(req);
-            const { body: person } = req; 
+            const { body: person } = req;
             try {
                 const createdPersonId = await personsServices.registerPerson({ person });
 
