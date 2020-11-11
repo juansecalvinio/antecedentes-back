@@ -1,6 +1,6 @@
 // DEBUG=app:* node scripts/mongo/seedUsers.js
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt-nodejs');
 const chalk = require('chalk');
 const debug = require('debug')('app:scripts:users');
 const MongoLib = require('../../lib/mongo');
