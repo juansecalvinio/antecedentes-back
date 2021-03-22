@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const bcrypt = require('bcrypt');
 const boom = require('@hapi/boom');
 const jwt = require('jsonwebtoken');
 const ApiKeysService = require('../services/apiKeys');
@@ -30,32 +31,21 @@ function authApi(app) {
     //   next(boom.unauthorized('apiKeyToken is required'));
     // }
 
-    if(!req.body) {
-      next(boom.unauthorized());
-    }
+    try {
 
-    const user = {
-      email: req.body.email,
-      password: req.body.password
-    }
+      if(!req.body) {
+        next(boom.unauthorized());
+      }
 
-    passport.authenticate('basic', function(error) {
-      try {
-        if (error || !user) {
-          next(boom.unauthorized());
-        }
+      const user = await usersService.getUser(req.body);
 
-        req.login(user, { session: false }, async function(error) {
-          if (error) {
-            next(error);
-          }
-
-          // const apiKey = await apiKeysService.getApiKey({ token: apiKeyToken });
-
-          // if (!apiKey) {
-          //   next(boom.unauthorized());
-          // }
-
+      if(!user) {
+        return res.status(401).json({ error: 401, message: 'No existe el usuario' });
+      }
+      
+      return bcrypt.compare(req.body.password, user.password)
+      .then(equals => {
+        if(equals === true) {
           const { _id: id, name, email } = user;
 
           const payload = {
@@ -69,11 +59,58 @@ function authApi(app) {
           });
 
           return res.status(200).json({ token, user: { id, name, email } });
-        });
-      } catch (error) {
-        next(error);
-      }
-    })(req, res, next);
+    
+        } else {
+
+          return res.status(401).json({ error: 401, message: 'Datos incorrectos' });
+        
+        }
+
+      }).catch(err => {
+        next(err);
+      });
+
+    } catch (error) {
+      next(error);
+    }
+    
+
+
+    // passport.authenticate('basic', function(error) {
+    //   try {
+    //     if (error || !user) {
+    //       next(boom.unauthorized());
+    //     }
+
+    //     req.login(user, { session: false }, async function(error) {
+    //       if (error) {
+    //         next(error);
+    //       }
+
+    //       // const apiKey = await apiKeysService.getApiKey({ token: apiKeyToken });
+
+    //       // if (!apiKey) {
+    //       //   next(boom.unauthorized());
+    //       // }
+
+    //       const { _id: id, name, email } = user;
+
+    //       const payload = {
+    //         sub: id,
+    //         name,
+    //         email,
+    //       };
+
+    //       const token = jwt.sign(payload, config.authJwtSecret, {
+    //         expiresIn: '15m'
+    //       });
+
+    //       return res.status(200).json({ token, user: { id, name, email } });
+    //     });
+    //   } catch (error) {
+    //     next(error);
+    //   }
+    // })(req, res, next);
   });
 
   router.post('/sign-up', validationHandler(createUserSchema), 
@@ -82,11 +119,19 @@ function authApi(app) {
 
       try {
         const createdUserId = await usersService.createUser({ user });
+        
+        if(createdUserId) {
+          res.status(201).json({
+            data: createdUserId,
+            message: 'user created'
+          });
+        } else {
+          res.status(401).json({
+            error: 401,
+            message: 'Ya existe el usuario'
+          })
+        }
 
-        res.status(201).json({
-          data: createdUserId,
-          message: 'user created'
-        });
       } catch (error) {
         next(error);
       }
