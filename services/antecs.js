@@ -1,4 +1,5 @@
 const MongoLib = require('./../lib/mongo');
+const { ObjectId } = require('mongodb');
 
 class AntecsServices {
     constructor() {
@@ -6,9 +7,14 @@ class AntecsServices {
         this.mongoDB = new MongoLib()
     }
 
-    async getAntecs({ tags }) {
-        const query = tags && { tags: { $in: tags }};
-        const antecs = await this.mongoDB.getAll(this.collection, query);
+    async getAntecs() {
+        const antecs = await this.mongoDB.getAll(this.collection);
+        return antecs || [];
+    }
+
+    async getAntecsByIds(ids) {
+        const formatedIds = ids.map(id => ObjectId(id));
+        const antecs = await this.mongoDB.getAll(this.collection, { _id: { $in: formatedIds } });
         return antecs || [];
     }
 

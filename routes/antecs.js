@@ -22,7 +22,7 @@ function antecsApi(app) {
 
             try {
                 const antecs = await antecsServices.getAntecs({ tags });
-
+                console.log(antecs)
                 res.status(200).json({
                     data: antecs,
                     message: 'Antecedentes listados'
@@ -45,6 +45,26 @@ function antecsApi(app) {
                 res.status(200).json({
                     data: antec,
                     message: 'Antecedente encontrado'
+                })
+            } catch (err) {
+                next(err);
+            }
+        }
+    )
+
+    // GetAll by ids
+    router.post("/ids", 
+        // passport.authenticate('jwt', { session: false }),
+        // scopeValidationHandler(['read:antecedentes']),
+        async function(req, res, next) {
+            const { ids } = req.body;
+            console.log(ids);
+            try {
+                const antecs = await antecsServices.getAntecsByIds(ids);
+
+                res.status(200).json({
+                    data: antecs,
+                    message: 'Antecedentes encontrados'
                 })
             } catch (err) {
                 next(err);
