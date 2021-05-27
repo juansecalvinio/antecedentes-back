@@ -1,8 +1,10 @@
 const express = require('express');
 const passport = require('passport');
 const AntecsServices = require('./../services/antecs');
+const LogsServices = require('./../services/logs');
 
 const antecsServices = new AntecsServices();
+const logsServices = new LogsServices();
 
 const scopeValidationHandler = require('./../utils/middleware/scopesValidationHandler');
 
@@ -61,7 +63,7 @@ function antecsApi(app) {
             console.log(ids);
             try {
                 const antecs = await antecsServices.getAntecsByIds(ids);
-
+                
                 res.status(200).json({
                     data: antecs,
                     message: 'Antecedentes encontrados'
@@ -80,7 +82,12 @@ function antecsApi(app) {
         const { body: antec } = req;
         try {
             const createdAntecId = await antecsServices.registerAntec({ antec });
-
+            let log = {
+                method: "POST",
+                collection: 'antecedentes',
+                description: `Registro agredado: ${createdAntecId}`
+            }
+            logsServices.registerLog({ log })
             res.status(201).json({
                 data: createdAntecId,
                 message: 'Antecedente registrado en la base de datos'
@@ -99,7 +106,12 @@ function antecsApi(app) {
         const { body: antec } = req;
         try {
             const updatedAntecId = await antecsServices.updateAntec({ id, antec });
-
+            let log = {
+                method: "PUT",
+                collection: 'antecedentes',
+                description: `Registro modificado: ${updatedAntecId}`
+            }
+            logsServices.registerLog({ log })
             res.status(200).json({
                 data: updatedAntecId,
                 message: 'Antecedente actualizado en la base de datos'
@@ -117,7 +129,12 @@ function antecsApi(app) {
             const { id } = req.params;
             try {
                 const deletedAntecId = await antecsServices.deleteAntec({ id });
-
+                let log = {
+                    method: "DELETE",
+                    collection: 'antecedentes',
+                    description: `Registro eliminado: ${deletedAntecId}`
+                }
+                logsServices.registerLog({ log })
                 res.status(200).json({
                     data: deletedAntecId,
                     message: 'Antecedente eliminado de la base de datos'

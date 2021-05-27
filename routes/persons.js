@@ -1,7 +1,7 @@
 const express = require('express');
 const passport = require('passport'); 
+const LogsServices = require('./../services/logs');
 const PersonsServices = require('./../services/persons');
-
 const { personIdSchema, createPersonSchema, udpatePersonSchema } = require('./../schemas/persons');
 
 const validationHandler = require('./../utils/middleware/validationHandler');
@@ -13,6 +13,7 @@ const {
     SIXTY_MINUTES_TO_SECONDS
 } = require('./../utils/time');
 
+const logsServices = new LogsServices();
 const personsServices = new PersonsServices();
 
 // JWT strategy
@@ -90,11 +91,15 @@ function personsApi(app) {
         // scopeValidationHandler(['create:personas']),
         // validationHandler(createPersonSchema),
         async function(req, res, next) {
-            console.log(req);
             const { body: person } = req;
             try {
                 const createdPersonId = await personsServices.registerPerson({ person });
-
+                let log = {
+                    method: "POST",
+                    collection: 'personas',
+                    description: `Registro agregado: ${createdPersonId}`
+                }
+                logsServices.registerLog({ log });
                 res.status(201).json({
                     data: createdPersonId,
                     message: 'Persona registrada en la base de datos'
@@ -110,13 +115,18 @@ function personsApi(app) {
         // passport.authenticate('jwt', { session: false }),
         // scopeValidationHandler(['update:personas']),
         validationHandler({ id: personIdSchema }, 'params'), 
-        validationHandler(udpatePersonSchema), 
+        validationHandler(udpatePersonSchema),
         async function(req, res, next) {
             const { id } = req.params;
             const { body: person } = req;
             try {
                 const updatedPersonId = await personsServices.updatePerson({ id, person });
-
+                let log = {
+                    method: "PUT",
+                    collection: 'personas',
+                    description: `Registro modificado: ${updatedPersonId}`
+                }
+                logsServices.registerLog({ log })
                 res.status(200).json({
                     data: updatedPersonId,
                     message: 'Persona actualizada en la base de datos'
@@ -136,7 +146,12 @@ function personsApi(app) {
             const { id } = req.params;
             try {
                 const deletedPersonId = await personsServices.deletePerson({ id });
-
+                let log = {
+                    method: "DELETE",
+                    collection: 'personas',
+                    description: `Registro eliminado: ${deletedPersonId}`
+                }
+                logsServices.registerLog({ log })
                 res.status(200).json({
                     data: deletedPersonId,
                     message: 'Persona eliminada de la base de datos'

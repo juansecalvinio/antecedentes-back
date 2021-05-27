@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const boom = require('@hapi/boom');
 const jwt = require('jsonwebtoken');
 const ApiKeysService = require('../services/apiKeys');
+const LogsServices = require('./../services/logs');
 const UsersService = require('../services/users');
 const validationHandler = require('../utils/middleware/validationHandler');
 
@@ -22,6 +23,7 @@ function authApi(app) {
   app.use('/api/auth', router);
 
   // const apiKeysService = new ApiKeysService();
+  const logsServices = new LogsServices();
   const usersService = new UsersService();
 
   router.post('/sign-in', async function(req, res, next) {
@@ -58,6 +60,12 @@ function authApi(app) {
             expiresIn: '15m'
           });
 
+          let log = {
+            method: "LOGIN",
+            collection: 'users',
+            description: `Login OK: user ${id}`
+          }
+          logsServices.registerLog({ log });
           return res.status(200).json({ token, user: { id, name, email } });
     
         } else {
@@ -119,7 +127,12 @@ function authApi(app) {
 
       try {
         const createdUserId = await usersService.createUser({ user });
-        
+        let log = {
+          method: "SIGNUP",
+          collection: 'users',
+          description: `Registro agregado: ${createdUserId}`
+        }
+        logsServices.registerLog({ log });
         if(createdUserId) {
           res.status(201).json({
             data: createdUserId,
