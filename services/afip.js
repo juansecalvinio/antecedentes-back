@@ -16,9 +16,7 @@ const afipsdk = new AfipSDK({
 class AfipServices {
 
     async getPersonAFIP(cuit) {
-        // const serverStatus = await afipsdk.RegisterScopeThirteen.getServerStatus();
-        // console.log("serverStatus", serverStatus);
-        const response = await afipsdk.RegisterScopeThirteen.getTaxpayerDetails(parseInt(cuit));
+        const response = await afipsdk.RegisterScopeTen.getTaxpayerDetails(parseInt(cuit));
         console.log("getPersonAFIP", response);
         return response || {};
     }
