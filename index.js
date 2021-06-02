@@ -7,12 +7,12 @@ const { config } = require('./config/index.js');
 const authApi = require('./routes/auth');
 const antecsApi = require('./routes/antecs');
 const personsApi = require('./routes/persons');
-
+const afipApi = require('./routes/afip');
 
 const { logErrors, wrapErrors, errorHandler } = require('./utils/middleware/errorHandlers');
 const notFoundHandler = require('./utils/middleware/notFoundHandler');
 
-// Middlewares 
+// Middlewares
 
 // body parser
 app.use(express.json());
@@ -22,6 +22,7 @@ app.use(cors());
 authApi(app);
 antecsApi(app);
 personsApi(app);
+afipApi(app);
 
 // catch 404
 app.use(notFoundHandler);
