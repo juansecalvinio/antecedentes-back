@@ -5,6 +5,7 @@ const app = express();
 const { config } = require('./config/index.js');
 
 const authApi = require('./routes/auth');
+const googleAuthApi = require('./routes/googleAuth');
 const antecsApi = require('./routes/antecs');
 const personsApi = require('./routes/persons');
 const afipApi = require('./routes/afip');
@@ -20,6 +21,7 @@ app.use(cors());
 
 // routes
 authApi(app);
+googleAuthApi(app);
 antecsApi(app);
 personsApi(app);
 afipApi(app);
