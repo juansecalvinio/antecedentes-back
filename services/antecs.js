@@ -13,9 +13,13 @@ class AntecsServices {
     }
 
     async getAntecsByIds(ids) {
-        const formatedIds = ids.map(id => ObjectId(id));
-        const antecs = await this.mongoDB.getAll(this.collection, { _id: { $in: formatedIds } });
-        return antecs || [];
+        if(ids) {
+            const formatedIds = ids.map(id => ObjectId(id));
+            const antecs = await this.mongoDB.getAll(this.collection, { _id: { $in: formatedIds } });
+            return antecs || [];
+        } else {
+            return [];
+        }
     }
 
     async getAntec({ id }) {
