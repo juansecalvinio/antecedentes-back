@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 const { config } = require('../config');
 
 function getGoogleAuthURL() {
-    console.log('config', config)
     const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
     const options = {
         redirect_uri: config.redirectURL,
@@ -78,7 +77,7 @@ function googleAuthApi(app) {
 
         const token = jwt.sign(googleUser, config.authJwtSecret);
 
-        res.cookie("googleUser", googleUser, {
+        res.cookie("GoogleUser", googleUser, {
             maxAge: 90000,
             httpOnly: false,
             secure: false,
@@ -86,10 +85,6 @@ function googleAuthApi(app) {
 
         res.redirect(config.frontendURL);
     })
-
-
-
-
 }
 
 module.exports = googleAuthApi;
