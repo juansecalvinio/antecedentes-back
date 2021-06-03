@@ -80,8 +80,8 @@ function googleAuthApi(app) {
         res.cookie("GoogleUser", googleUser, {
             maxAge: 90000,
             httpOnly: false,
-            sameSite: false,
             secure: true,
+            sameSite: "none",
         })
 
         res.redirect(config.frontendURL);
