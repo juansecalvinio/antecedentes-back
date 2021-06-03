@@ -79,6 +79,7 @@ function googleAuthApi(app) {
 
         res.cookie("GoogleUser", googleUser, {
             maxAge: 90000,
+            httpOnly: false,
             sameSite: 'none',
             secure: true,
         })
