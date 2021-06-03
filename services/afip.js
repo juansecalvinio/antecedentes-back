@@ -17,7 +17,6 @@ class AfipServices {
 
     async getPersonAFIP(cuit) {
         const response = await afipsdk.RegisterScopeTen.getTaxpayerDetails(parseInt(cuit));
-        console.log("getPersonAFIP", response);
         return response || {};
     }
 }

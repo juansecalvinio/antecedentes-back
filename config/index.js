@@ -16,6 +16,8 @@ const config = {
     cuitAfip: process.env.CUIT_AFIP || 20370195952,
     googleClientId: process.env.GOOGLE_CLIENT_ID,
     googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    redirectURL: process.env.REDIRECT_URL,
+    frontendURL: process.env.FRONTEND_URL,
 }
 
 module.exports = { config };

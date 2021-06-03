@@ -5,12 +5,11 @@ const jwt = require('jsonwebtoken');
 
 const { config } = require('../config');
 
-const redirectURL = "https://antecedentes-back.herokuapp.com/api/auth/google";
-
 function getGoogleAuthURL() {
+    console.log('config', config)
     const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
     const options = {
-        redirect_uri: redirectURL,
+        redirect_uri: config.redirectURL,
         client_id: config.googleClientId,
         access_type: "offline",
         response_type: "code",
@@ -31,7 +30,7 @@ function getTokens({ code, clientId, clientSecret, redirectUri }) {
         code, 
         client_id: clientId,
         client_secret: clientSecret,
-        redirect_uri: redirectUri,
+        redirect_uri: config.redirectURL,
         grant_type: "authorization_code"
     }
 
@@ -62,17 +61,15 @@ function googleAuthApi(app) {
             code,
             clientId: config.googleClientId,
             clientSecret: config.googleClientSecret,
-            redirectUri: redirectURL
+            redirectUri: config.redirectURL,
         });
 
-        const googleUser = await axios.get(
-            `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${id_token}`
-                }
+        const googleUser = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`,
+        {
+            headers: {
+                Authorization: `Bearer ${id_token}`
             }
-        )
+        })
         .then(res => res.data)
         .catch(error => {
             console.error("Failed to get Google User");
@@ -81,17 +78,13 @@ function googleAuthApi(app) {
 
         const token = jwt.sign(googleUser, config.authJwtSecret);
 
-        res.cookie("googleToken", token, {
+        res.cookie("googleUser", googleUser, {
             maxAge: 90000,
-            httpOnly: true,
+            httpOnly: false,
             secure: false,
         })
 
-        // Acá lo manejo como un sign-in o sign-up normal, de auth.js
-        return res.status(200).json({
-            data: googleUser,
-            message: "Acceso autorizado por Google"
-        })
+        res.redirect(config.frontendURL);
     })
 
 

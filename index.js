@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const app = express();
 
 const { config } = require('./config/index.js');
@@ -18,6 +19,7 @@ const notFoundHandler = require('./utils/middleware/notFoundHandler');
 // body parser
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 
 // routes
 authApi(app);
