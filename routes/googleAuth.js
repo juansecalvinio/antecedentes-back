@@ -69,7 +69,7 @@ function googleAuthApi(app) {
                 Authorization: `Bearer ${id_token}`
             }
         })
-        .then(res => res.data)
+        .then(response => response.data)
         .catch(error => {
             console.error("Failed to get Google User");
             throw new Error(error.message);
@@ -77,11 +77,12 @@ function googleAuthApi(app) {
 
         const token = jwt.sign(googleUser, config.authJwtSecret);
 
-        res.cookie("GoogleUser", googleUser, {
+        console.log('[GoogleUser]', googleUser);
+        res.cookie('GoogleUser', googleUser, {
             maxAge: 90000,
             httpOnly: false,
             secure: true,
-            sameSite: "none",
+            sameSite: 'none',
         })
 
         res.redirect(config.frontendURL);
