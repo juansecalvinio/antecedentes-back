@@ -77,11 +77,10 @@ function googleAuthApi(app) {
 
         const token = jwt.sign(googleUser, config.authJwtSecret);
 
-        console.log('[GoogleUser]', googleUser);
         res.cookie('GoogleUser', googleUser, {
             maxAge: 90000,
+            httpsOnly: false,
             httpOnly: false,
-            secure: true,
             sameSite: 'none',
         })
 
