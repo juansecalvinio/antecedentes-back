@@ -17,9 +17,10 @@ const notFoundHandler = require('./utils/middleware/notFoundHandler');
 // Middlewares
 
 // body parser
+app.set('trust proxy', 1);
+app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
-app.use(cookieParser());
 
 // routes
 authApi(app);
