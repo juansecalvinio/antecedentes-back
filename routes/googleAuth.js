@@ -93,7 +93,7 @@ function googleAuthApi(app) {
         try {
             const user = req.cookies['google_user'];
             if(typeof user !== "undefined") {
-                return res.status(200).json(JSON.parse(user));
+                return res.status(200).json(user);
             } else {
                 return res.send(null);
             }
