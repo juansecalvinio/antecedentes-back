@@ -95,11 +95,11 @@ function googleAuthApi(app) {
             if(typeof user !== "undefined") {
                 return res.status(200).json(user);
             } else {
-                return res.send(null);
+                return res.status(404).json({ error: 404, message: 'No se encontraron datos' });
             }
         } catch (err) {
             console.error(err);
-            return res.send(null);
+            return res.status(500).json({ error: 500, message: 'Internal server error' });
         }
     });
 }
