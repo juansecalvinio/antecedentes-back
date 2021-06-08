@@ -84,6 +84,8 @@ function googleAuthApi(app) {
             sameSite: 'none',
         })
 
+        console.log('[ ALL COOKIES ]', req.cookies);
+
         res.redirect(config.frontendURL);
     })
 
