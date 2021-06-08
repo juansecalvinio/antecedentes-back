@@ -77,14 +77,14 @@ function googleAuthApi(app) {
 
         const token = jwt.sign(googleUser, config.authJwtSecret);
 
+        console.log('===== TOKEN =====', token);
+        console.log('===== GOOGLE USER =====', googleUser);
+
         res.cookie('google_user', googleUser, {
             maxAge: 900000,
-            httpOnly: false,
-            secure: true,
-            sameSite: 'none',
         })
 
-        console.log('[ ALL COOKIES ]', req.cookies);
+        console.log('===== COOKIES =====', req.cookies);
 
         res.redirect(config.frontendURL);
     })
