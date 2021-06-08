@@ -47,13 +47,13 @@ function getTokens({ code, clientId, clientSecret, redirectUri }) {
 
 function googleAuthApi(app) {
     const router = express.Router();
-    app.use('/api/auth', router);
+    app.use('/api/auth/google', router);
 
-    router.get("/google/url", (req, res, next) => {
+    router.get("/url", (req, res, next) => {
         return res.send(getGoogleAuthURL());
     });
 
-    router.get("/google", async (req, res, next) => {
+    router.get("/", async (req, res, next) => {
         const code = req.query.code;
 
         const { id_token, access_token } = await getTokens({
@@ -90,10 +90,14 @@ function googleAuthApi(app) {
     router.get("/me", (req, res, next) => {
         try {
             const user = req.cookies['google_user'];
-            return res.send(user);
+            if(typeof user !== "undefined") {
+                return res.status(200).json(JSON.parse(user));
+            } else {
+                return res.send(null);
+            }
         } catch (err) {
             console.error(err);
-            res.send(null);
+            return res.send(null);
         }
     });
 }
