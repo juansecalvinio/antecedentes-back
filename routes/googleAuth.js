@@ -86,6 +86,16 @@ function googleAuthApi(app) {
 
         res.redirect(config.frontendURL);
     })
+
+    router.get("/me", (req, res, next) => {
+        try {
+            const user = req.cookies['google_user'];
+            return res.send(user);
+        } catch (err) {
+            console.error(err);
+            res.send(null);
+        }
+    });
 }
 
 module.exports = googleAuthApi;
