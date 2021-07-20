@@ -16,6 +16,9 @@ const config = {
     cuitAfip: process.env.CUIT_AFIP || 20370195952,
     googleClientId: process.env.GOOGLE_CLIENT_ID,
     googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    googleRefreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+    googleEmail: process.env.GOOGLE_EMAIL,
+    googlePassword: process.env.GOOGLE_PASSWORD,
     redirectURL: process.env.REDIRECT_URL,
     frontendURL: process.env.FRONTEND_URL,
 }

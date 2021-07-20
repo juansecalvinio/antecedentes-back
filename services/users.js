@@ -7,9 +7,19 @@ class UsersServices {
         this.mongoDB = new MongoLib();
     }
 
-    async getUser({ email }) {
-        const [ user ] = await this.mongoDB.getAll(this.collection, { email });
-        return user;
+    async getUser(email) {
+        const user = await this.mongoDB.getAll(this.collection, { email });
+        return user || {};
+    }
+
+    async getUserById(userId) {
+        const user = await this.mongoDB.getByParam(this.collection, '_id', userId);
+        return user || {};
+    }
+
+    async getUserToken(userId) {
+        const userToken = await this.mongoDB.getByParam("user_token", "userId", userId);
+        return userToken || {};
     }
 
     async createUser({ user }) {
@@ -18,8 +28,6 @@ class UsersServices {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         let _getUser = await this.getUser({ email });
-
-        console.log(_getUser);
 
         if(_getUser) {
             return false;
@@ -32,6 +40,20 @@ class UsersServices {
         });
 
         return createdUserId;
+    }
+
+    async resetUserPassword(userId, password) {
+        const updatedUserId = await this.mongoDB.update(this.collection, userId, { password });
+        return updatedUserId;
+    }
+
+    async createUserToken(userId, token) {
+        const createdUserTokenId = await this.mongoDB.create("user_token", {
+            userId,
+            token
+        })
+
+        return createdUserTokenId;
     }
 }
 
