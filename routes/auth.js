@@ -157,13 +157,12 @@ function authApi(app) {
 
       transporter.sendMail(mailOptions(), function(err, info) {
         if(err) {
-          // console.log(err);
           res.status(401).json({
             error: 401,
-            message: 'No se pudo enviar el correo',
+            errorMessage: err,
+            message: `No se pudo enviar el correo.`,
           })
         } else {
-          // console.log(info);
           res.status(200).json({
             data: info,
             message: 'Se ha enviado un correo para continuar con el cambio de contraseña.'
