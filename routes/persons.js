@@ -1,15 +1,14 @@
 const express = require('express');
-const passport = require('passport'); 
+// const passport = require('passport'); 
 const LogsServices = require('./../services/logs');
 const PersonsServices = require('./../services/persons');
-const { personIdSchema, createPersonSchema, udpatePersonSchema } = require('./../schemas/persons');
+const { personIdSchema, udpatePersonSchema } = require('./../schemas/persons');
 
 const validationHandler = require('./../utils/middleware/validationHandler');
-const scopeValidationHandler = require('./../utils/middleware/scopesValidationHandler');
+// const scopeValidationHandler = require('./../utils/middleware/scopesValidationHandler');
 
 const cacheResponse = require('./../utils/cacheResponse');
-const {
-    FIVE_MINUTES_TO_SECONDS, 
+const { 
     SIXTY_MINUTES_TO_SECONDS
 } = require('./../utils/time');
 
@@ -138,7 +137,7 @@ function personsApi(app) {
     );
 
     // Delete person
-    router.delete("/:id", 
+    router.delete("/:id",
         // passport.authenticate('jwt', { session: false }),
         // scopeValidationHandler(['delete:personas']),
         validationHandler({ id: personIdSchema }), 

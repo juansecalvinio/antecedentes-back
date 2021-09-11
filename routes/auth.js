@@ -1,37 +1,32 @@
 const express = require('express');
-const passport = require('passport');
 const bcrypt = require('bcrypt');
 const boom = require('@hapi/boom');
 const jwt = require('jsonwebtoken');
-const ApiKeysService = require('../services/apiKeys');
+const nodemailer = require('nodemailer');
+const handlebars = require('handlebars');
+const fs = require("fs");
+const path = require("path");
 const LogsServices = require('./../services/logs');
 const UsersService = require('../services/users');
 const validationHandler = require('../utils/middleware/validationHandler');
-
-const {
-  createUserSchema,
-  createProviderUserSchema
-} = require('../schemas/users');
-
 const { config } = require('../config');
+
+const { createUserSchema } = require('../schemas/users');
+
 
 // Basic strategy
 require('../utils/auth/strategies/basic');
 
 function authApi(app) {
+
   const router = express.Router();
+
   app.use('/api/auth', router);
 
-  // const apiKeysService = new ApiKeysService();
   const logsServices = new LogsServices();
   const usersService = new UsersService();
 
   router.post('/sign-in', async function(req, res, next) {
-    // const { apiKeyToken } = req.body;
-
-    // if (!apiKeyToken) {
-    //   next(boom.unauthorized('apiKeyToken is required'));
-    // }
 
     try {
 
@@ -39,7 +34,7 @@ function authApi(app) {
         next(boom.unauthorized());
       }
 
-      const user = await usersService.getUser(req.body);
+      const [ user ] = await usersService.getUser(req.body.email);
 
       if(!user) {
         return res.status(401).json({ error: 401, message: 'No existe el usuario' });
@@ -66,6 +61,7 @@ function authApi(app) {
             description: `Login OK: user ${id}`
           }
           logsServices.registerLog({ log });
+
           return res.status(200).json({ token, user: { id, name, email } });
     
         } else {
@@ -81,44 +77,6 @@ function authApi(app) {
     } catch (error) {
       next(error);
     }
-    
-
-
-    // passport.authenticate('basic', function(error) {
-    //   try {
-    //     if (error || !user) {
-    //       next(boom.unauthorized());
-    //     }
-
-    //     req.login(user, { session: false }, async function(error) {
-    //       if (error) {
-    //         next(error);
-    //       }
-
-    //       // const apiKey = await apiKeysService.getApiKey({ token: apiKeyToken });
-
-    //       // if (!apiKey) {
-    //       //   next(boom.unauthorized());
-    //       // }
-
-    //       const { _id: id, name, email } = user;
-
-    //       const payload = {
-    //         sub: id,
-    //         name,
-    //         email,
-    //       };
-
-    //       const token = jwt.sign(payload, config.authJwtSecret, {
-    //         expiresIn: '15m'
-    //       });
-
-    //       return res.status(200).json({ token, user: { id, name, email } });
-    //     });
-    //   } catch (error) {
-    //     next(error);
-    //   }
-    // })(req, res, next);
   });
 
   router.post('/sign-up', validationHandler(createUserSchema), 
@@ -151,43 +109,103 @@ function authApi(app) {
     }
   );
 
-  // router.post('/sign-provider', validationHandler(createProviderUserSchema),
-  //   async function(req, res, next) {
-  //     const { body } = req;
+  router.post('/forget-password', async function(req, res, next) {
+    
+    if(!req.body) {
+      next(boom.unauthorized());
+    }
 
-  //     const { apiKeyToken, ...user } = body;
+    try {
+      // TODO: Enviar mail de recuperación. Y respuesta al frontend para informar al usuario
+      let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user: config.googleEmail,
+          pass: config.googlePassword,
+          clientId: config.googleClientId,
+          clientSecret: config.googleClientSecret,
+          refreshToken: config.googleRefreshToken
+        }
+      });
 
-  //     // if (!apiKeyToken) {
-  //     //   next(boom.unauthorized('apiKeyToken is required'));
-  //     // }
+      // TODO: Buscar usuario con mail, para obtener el nombre, y saludarlo en el mail.
+      const [ user ] = await usersService.getUser(req.body.mail);
+      if(!user) res.status(401).json({
+        error: 401,
+        message: 'No se encontró ningún usuario.'
+      })
 
-  //     try {
-  //       const queriedUser = await usersService.getOrCreateUser({ user });
-  //       const apiKey = await apiKeysService.getApiKey({ token: apiKeyToken });
+      const token = jwt.sign(req.body.mail, config.authJwtSecret);
+      // TODO: Armar la url para enviar en el html handlebars
+      const resetLink = `${config.frontendURL}reset-password/${user._id}/${token}`;
 
-  //       if (!apiKey) {
-  //         next(boom.unauthorized());
-  //       }
+      const srcTemplate = fs.readFileSync(path.join(__dirname, "./../utils/mail/templates/requestResetPassword.handlebars"), "utf8");
+      const compiledTemplate = handlebars.compile(srcTemplate);
 
-  //       const { _id: id, name, email } = queriedUser;
+      const mailOptions = () => {
+        return {
+          from: config.googleEmail,
+          to: req.body.mail,
+          subject: 'Antecedentes Laborales | Blanqueo de contraseña',
+          html: compiledTemplate({
+            name: user.name,
+            link: resetLink
+          }),
+        };
+      };
 
-  //       const payload = {
-  //         sub: id,
-  //         name,
-  //         email,
-  //         scopes: apiKey.scopes
-  //       };
+      transporter.sendMail(mailOptions(), function(err, info) {
+        if(err) {
+          // console.log(err);
+          res.status(401).json({
+            error: 401,
+            message: 'No se pudo enviar el correo',
+          })
+        } else {
+          // console.log(info);
+          res.status(200).json({
+            data: info,
+            message: 'Se ha enviado un correo para continuar con el cambio de contraseña.'
+          })
+        }
+      })
 
-  //       const token = jwt.sign(payload, config.authJwtSecret, {
-  //         expiresIn: '15m'
-  //       });
+    } catch (error) {
+      next(error);
+    }
+  })
 
-  //       return res.status(200).json({ token, user: { id, name, email } });
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   }
-  // );
+  router.post("/reset-password/:userId/:token", async function(req, res, next) {
+    try {
+
+      const { newPassword } = req.body; 
+      const { userId } = req.params;
+      
+      const user = await usersService.getUserById(userId);
+      if(!user) res.status(400).send({ message: 'Invalid link or expired'});
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      const updatedUserId = await usersService.resetUserPassword(userId, hashedPassword);
+
+      if(updatedUserId) {
+        res.status(201).json({
+          data: updatedUserId,
+          message: 'password updated'
+        });
+      } else {
+        res.status(401).json({
+          error: 401,
+          message: 'No se pudo blanquear la clave'
+        })
+      }
+
+    } catch (error) {
+      next(error);
+    }
+  })
+
 }
 
 module.exports = authApi;
